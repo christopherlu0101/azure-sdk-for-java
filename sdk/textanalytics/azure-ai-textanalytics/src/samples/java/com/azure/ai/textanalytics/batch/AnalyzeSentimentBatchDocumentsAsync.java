@@ -8,6 +8,7 @@ import com.azure.ai.textanalytics.TextAnalyticsClientBuilder;
 import com.azure.ai.textanalytics.models.AnalyzeSentimentResult;
 import com.azure.ai.textanalytics.models.DocumentResultCollection;
 import com.azure.ai.textanalytics.models.TextAnalyticsRequestOptions;
+import com.azure.ai.textanalytics.models.TextAnalyticsApiKeyCredential;
 import com.azure.ai.textanalytics.models.TextDocumentBatchStatistics;
 import com.azure.ai.textanalytics.models.TextDocumentInput;
 import com.azure.ai.textanalytics.models.TextSentiment;
@@ -28,8 +29,8 @@ public class AnalyzeSentimentBatchDocumentsAsync {
     public static void main(String[] args) {
         // Instantiate a client that will be used to call the service.
         TextAnalyticsAsyncClient client = new TextAnalyticsClientBuilder()
-            .subscriptionKey("{subscription_key}")
-            .endpoint("https://{servicename}.cognitiveservices.azure.com/")
+            .subscriptionKey(new TextAnalyticsApiKeyCredential("{subscription_key}"))
+            .endpoint("{endpoint}")
             .buildAsyncClient();
 
         // The texts that need be analysed.
@@ -51,7 +52,7 @@ public class AnalyzeSentimentBatchDocumentsAsync {
                 final TextDocumentBatchStatistics batchStatistics = analyzedBatchResult.getStatistics();
                 System.out.printf("A batch of document statistics, document count: %s, erroneous document count: %s, transaction count: %s, valid document count: %s.%n",
                     batchStatistics.getDocumentCount(),
-                    batchStatistics.getErroneousDocumentCount(),
+                    batchStatistics.getInvalidDocumentCount(),
                     batchStatistics.getTransactionCount(),
                     batchStatistics.getValidDocumentCount());
 

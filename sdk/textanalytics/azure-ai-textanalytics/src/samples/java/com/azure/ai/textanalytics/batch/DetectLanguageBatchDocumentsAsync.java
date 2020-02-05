@@ -10,6 +10,7 @@ import com.azure.ai.textanalytics.models.DetectLanguageResult;
 import com.azure.ai.textanalytics.models.DetectedLanguage;
 import com.azure.ai.textanalytics.models.DocumentResultCollection;
 import com.azure.ai.textanalytics.models.TextAnalyticsRequestOptions;
+import com.azure.ai.textanalytics.models.TextAnalyticsApiKeyCredential;
 import com.azure.ai.textanalytics.models.TextDocumentBatchStatistics;
 
 import java.util.Arrays;
@@ -28,8 +29,8 @@ public class DetectLanguageBatchDocumentsAsync {
     public static void main(String[] args) {
         // Instantiate a client that will be used to call the service.
         TextAnalyticsAsyncClient client = new TextAnalyticsClientBuilder()
-            .subscriptionKey("{subscription_key}")
-            .endpoint("https://{servicename}.cognitiveservices.azure.com/")
+            .subscriptionKey(new TextAnalyticsApiKeyCredential("{subscription_key}"))
+            .endpoint("{endpoint}")
             .buildAsyncClient();
 
         // The texts that need be analysed.
@@ -42,7 +43,7 @@ public class DetectLanguageBatchDocumentsAsync {
         final TextAnalyticsRequestOptions requestOptions = new TextAnalyticsRequestOptions().setShowStatistics(true);
 
         // Detecting batch languages
-        client.detectBatchLanguagesWithResponse(inputs, requestOptions).subscribe(
+        client.detectBatchLanguageWithResponse(inputs, requestOptions).subscribe(
             result -> {
                 final DocumentResultCollection<DetectLanguageResult> detectedBatchResult = result.getValue();
                 System.out.printf("Model version: %s%n", detectedBatchResult.getModelVersion());
@@ -51,7 +52,7 @@ public class DetectLanguageBatchDocumentsAsync {
                 final TextDocumentBatchStatistics batchStatistics = detectedBatchResult.getStatistics();
                 System.out.printf("Batch statistics, document count: %s, erroneous document count: %s, transaction count: %s, valid document count: %s.%n",
                     batchStatistics.getDocumentCount(),
-                    batchStatistics.getErroneousDocumentCount(),
+                    batchStatistics.getInvalidDocumentCount(),
                     batchStatistics.getTransactionCount(),
                     batchStatistics.getValidDocumentCount());
 

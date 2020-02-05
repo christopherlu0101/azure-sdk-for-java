@@ -76,8 +76,8 @@ cognitive services.
     <!-- embedme ./src/samples/java/com/azure/ai/textanalytics/ReadmeSamples.java#L45-L48 -->
     ```java
     TextAnalyticsClient textAnalyticsClient = new TextAnalyticsClientBuilder()
-        .subscriptionKey(SUBSCRIPTION_KEY)
-        .endpoint(ENDPOINT)
+        .subscriptionKey(new TextAnalyticsApiKeyCredential("{subscription_key}"))
+        .endpoint("{endpoint}")
         .buildClient();
     ```
 
@@ -103,7 +103,7 @@ cognitive services.
    <!-- embedme ./src/samples/java/com/azure/ai/textanalytics/ReadmeSamples.java#L65-L68 -->
     ```java
     TextAnalyticsAsyncClient textAnalyticsClient = new TextAnalyticsClientBuilder()
-        .endpoint(ENDPOINT)
+        .endpoint("{endpoint}")
         .credential(new DefaultAzureCredentialBuilder().build())
         .buildAsyncClient();
     ```
@@ -117,11 +117,24 @@ your resource and a subscription key that allows you access:
 <!-- embedme ./src/samples/java/com/azure/ai/textanalytics/ReadmeSamples.java#L45-L48 -->
 ```java
 TextAnalyticsClient textAnalyticsClient = new TextAnalyticsClientBuilder()
-    .subscriptionKey(SUBSCRIPTION_KEY)
-    .endpoint(ENDPOINT)
+    .subscriptionKey(new TextAnalyticsApiKeyCredential("{subscription_key}"))
+    .endpoint("{endpoint}")
     .buildClient();
 ```
 
+#### Rotate existing subscription key
+The Azure Text Analytics client library provide a way to rotate the existing subscription key.
+
+<!-- embedme ./src/samples/java/com/azure/ai/textanalytics/ReadmeSamples.java#L175-L181 -->
+```java
+TextAnalyticsApiKeyCredential credential = new TextAnalyticsApiKeyCredential("{expired_subscription_key}");
+TextAnalyticsClient textAnalyticsClient = new TextAnalyticsClientBuilder()
+    .subscriptionKey(credential)
+    .endpoint("{endpoint}")
+    .buildClient();
+
+credential.updateCredential("{new_subscription_key}");
+```
 ## Key concepts
 
 ### Text Input
@@ -189,15 +202,15 @@ Text analytics support both synchronous and asynchronous client creation by usin
 <!-- embedme ./src/samples/java/com/azure/ai/textanalytics/ReadmeSamples.java#L45-L48 -->
 ``` java
 TextAnalyticsClient textAnalyticsClient = new TextAnalyticsClientBuilder()
-    .subscriptionKey(SUBSCRIPTION_KEY)
-    .endpoint(ENDPOINT)
+    .subscriptionKey(new TextAnalyticsApiKeyCredential("{subscription_key}"))
+    .endpoint("{endpoint}")
     .buildClient();
 ```
 <!-- embedme ./src/samples/java/com/azure/ai/textanalytics/ReadmeSamples.java#L55-L58 -->
 ``` java
 TextAnalyticsAsyncClient textAnalyticsClient = new TextAnalyticsClientBuilder()
-    .subscriptionKey(SUBSCRIPTION_KEY)
-    .endpoint(ENDPOINT)
+    .subscriptionKey(new TextAnalyticsApiKeyCredential("{subscription_key}"))
+    .endpoint("{endpoint}")
     .buildAsyncClient();
 ```
 
@@ -219,27 +232,27 @@ for (DetectedLanguage detectedLanguage : textAnalyticsClient.detectLanguage(inpu
 ```java
 String text = "Satya Nadella is the CEO of Microsoft";
 
-for (NamedEntity entity : textAnalyticsClient.recognizeEntities(text).getNamedEntities()) {
+for (CategorizedEntity entity : textAnalyticsClient.recognizeEntities(text).getEntities()) {
     System.out.printf(
-        "Recognized Named Entity: %s, Type: %s, Subtype: %s, Score: %s.%n",
+        "Recognized Categorized Entity: %s, Category: %s, SubCategory: %s, Score: %s.%n",
         entity.getText(),
-        entity.getType(),
-        entity.getSubtype(),
+        entity.getCategory(),
+        entity.getSubCategory(),
         entity.getScore());
 }
 ```
 
-### Recognize PII(Personally Identifiable Information) entity
+### Recognize PII (Personally Identifiable Information) entity
 <!-- embedme ./src/samples/java/com/azure/ai/textanalytics/ReadmeSamples.java#L105-L114 -->
 ```java
 String text = "My SSN is 555-55-5555";
 
-for (NamedEntity entity : textAnalyticsClient.recognizePiiEntities(text).getNamedEntities()) {
+for (PiiEntity entity : textAnalyticsClient.recognizePiiEntities(text).getEntities()) {
     System.out.printf(
-        "Recognized PII Entity: %s, Type: %s, Subtype: %s, Score: %s.%n",
+        "Recognized PII Entity: %s, Category: %s, SubCategory: %s, Score: %s.%n",
         entity.getText(),
-        entity.getType(),
-        entity.getSubtype(),
+        entity.getCategory(),
+        entity.getSubCategory(),
         entity.getScore());
 }
 ```
@@ -285,8 +298,13 @@ Text Analytics clients raise exceptions. For example, if you try to detect the l
 document IDs, `400` error is return that indicating bad request. In the following code snippet, the error is handled 
 gracefully by catching the exception and display the additional information about the error.
 
-<!-- embedme ./src/samples/java/com/azure/ai/textanalytics/ReadmeSamples.java#L164-L168 -->
+<!-- embedme ./src/samples/java/com/azure/ai/textanalytics/ReadmeSamples.java#L159-L168 -->
 ```java
+List<DetectLanguageInput> inputs = Arrays.asList(
+    new DetectLanguageInput("1", "This is written in English.", "us"),
+    new DetectLanguageInput("1", "Este es un document escrito en Español.", "es")
+);
+
 try {
     textAnalyticsClient.detectBatchLanguages(inputs);
 } catch (HttpResponseException e) {
@@ -298,7 +316,7 @@ try {
 You can set the `AZURE_LOG_LEVEL` environment variable to view logging statements made in the client library. For
 example, setting `AZURE_LOG_LEVEL=2` would show all informational, warning, and error log messages. The log levels can
 be found here: [log levels][LogLevels].
-
+git add 
 ### Default HTTP Client
 All client libraries by default use the Netty HTTP client. Adding the above dependency will automatically configure 
 the client library to use the Netty HTTP client. Configuring or changing the HTTP client is detailed in the
