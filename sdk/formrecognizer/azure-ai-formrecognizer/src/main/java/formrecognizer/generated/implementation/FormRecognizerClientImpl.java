@@ -2,13 +2,29 @@
 // Changes may cause incorrect behavior and will be lost if the code is
 // regenerated.
 
-package formrecognizer;
+package formrecognizer.generated.implementation;
 
+import com.azure.core.annotation.BodyParam;
+import com.azure.core.annotation.Delete;
+import com.azure.core.annotation.ExpectedResponses;
+import com.azure.core.annotation.Get;
+import com.azure.core.annotation.Host;
+import com.azure.core.annotation.HostParam;
+import com.azure.core.annotation.PathParam;
+import com.azure.core.annotation.Post;
+import com.azure.core.annotation.QueryParam;
 import com.azure.core.annotation.ReturnType;
+import com.azure.core.annotation.ServiceInterface;
 import com.azure.core.annotation.ServiceMethod;
+import com.azure.core.annotation.UnexpectedResponseExceptionType;
 import com.azure.core.http.HttpPipeline;
+import com.azure.core.http.HttpPipelineBuilder;
+import com.azure.core.http.policy.CookiePolicy;
+import com.azure.core.http.policy.RetryPolicy;
+import com.azure.core.http.policy.UserAgentPolicy;
 import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.SimpleResponse;
+import formrecognizer.FormRecognizerClient;
 import formrecognizer.generated.models.AnalyzeLayoutAsyncResponse;
 import formrecognizer.generated.models.AnalyzeLayoutAsyncWithJpegResponse;
 import formrecognizer.generated.models.AnalyzeLayoutAsyncWithPdfResponse;
@@ -21,6 +37,7 @@ import formrecognizer.generated.models.AnalyzeReceiptAsyncWithPdfResponse;
 import formrecognizer.generated.models.AnalyzeReceiptAsyncWithPngResponse;
 import formrecognizer.generated.models.AnalyzeReceiptAsyncWithTiffResponse;
 import formrecognizer.generated.models.AnalyzeWithCustomModelResponse;
+import formrecognizer.generated.models.ErrorResponseException;
 import formrecognizer.generated.models.Model;
 import formrecognizer.generated.models.ModelsModel;
 import formrecognizer.generated.models.TrainCustomModelAsyncResponse;
@@ -28,23 +45,178 @@ import formrecognizer.generated.models.TrainRequest;
 import java.util.UUID;
 import reactor.core.publisher.Mono;
 
+
+
+/**************** 
+ * 
+ * THIS IS MANUALLY IMPORT
+ * import com.azure.core.http.rest.RestProxy; 
+ * 
+******************/
+import com.azure.core.http.rest.RestProxy;
+
+
 /**
- * The interface for FormRecognizerClient class.
+ * Initializes a new instance of the FormRecognizerClient type.
  */
-public interface FormRecognizerClient {
+public final class FormRecognizerClientImpl implements FormRecognizerClient {
+    /**
+     * The proxy service used to perform REST calls.
+     */
+    private FormRecognizerClientService service;
+
+    /**
+     * Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
+     */
+    private String endpoint;
+
     /**
      * Gets Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
      *
      * @return the endpoint value.
      */
-    String getEndpoint();
+    public String getEndpoint() {
+        return this.endpoint;
+    }
+
+    /**
+     * Sets Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
+     *
+     * @param endpoint the endpoint value.
+     */
+    FormRecognizerClientImpl setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+        return this;
+    }
+
+    /**
+     * The HTTP pipeline to send requests through.
+     */
+    private HttpPipeline httpPipeline;
 
     /**
      * Gets The HTTP pipeline to send requests through.
      *
      * @return the httpPipeline value.
      */
-    HttpPipeline getHttpPipeline();
+    public HttpPipeline getHttpPipeline() {
+        return this.httpPipeline;
+    }
+
+    /**
+     * Initializes an instance of FormRecognizerClient client.
+     */
+    public FormRecognizerClientImpl() {
+        new HttpPipelineBuilder().policies(new UserAgentPolicy(), new RetryPolicy(), new CookiePolicy()).build();
+    }
+
+    /**
+     * Initializes an instance of FormRecognizerClient client.
+     *
+     * @param httpPipeline The HTTP pipeline to send requests through.
+     */
+    public FormRecognizerClientImpl(HttpPipeline httpPipeline) {
+        this.httpPipeline = httpPipeline;
+        this.service = RestProxy.create(FormRecognizerClientService.class, this.httpPipeline);
+    }
+
+    /**
+     * The interface defining all the services for FormRecognizerClient to be
+     * used by the proxy service to perform REST calls.
+     */
+    @Host("{endpoint}/formrecognizer/v2.0-preview")
+    @ServiceInterface(name = "FormRecognizerClient")
+    private interface FormRecognizerClientService {
+        @Post("custom/models")
+        @ExpectedResponses({201})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<TrainCustomModelAsyncResponse> trainCustomModelAsync(@HostParam("endpoint") String endpoint, @BodyParam("application/json; charset=utf-8") TrainRequest trainRequest);
+
+        @Get("custom/models")
+        @ExpectedResponses({200})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<SimpleResponse<ModelsModel>> getCustomModels(@HostParam("endpoint") String endpoint, @QueryParam("op") String op);
+
+        @Get("custom/models/{modelId}")
+        @ExpectedResponses({200})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<SimpleResponse<Model>> getCustomModel(@PathParam("modelId") UUID modelId, @HostParam("endpoint") String endpoint, @QueryParam("includeKeys") Boolean includeKeys);
+
+        @Delete("custom/models/{modelId}")
+        @ExpectedResponses({204})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<Response<Void>> deleteCustomModel(@PathParam("modelId") UUID modelId, @HostParam("endpoint") String endpoint);
+
+        @Post("custom/models/{modelId}/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeWithCustomModelResponse> analyzeWithCustomModel(@PathParam("modelId") UUID modelId, @HostParam("endpoint") String endpoint, @QueryParam("includeTextDetails") Boolean includeTextDetails, @BodyParam("application/json; charset=utf-8") Object fileStream);
+
+        @Get("custom/models/{modelId}/analyzeResults/{resultId}")
+        @ExpectedResponses({200})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<SimpleResponse<AnalyzeOperationResult>> getAnalyzeFormResult(@PathParam("modelId") UUID modelId, @PathParam("resultId") UUID resultId, @HostParam("endpoint") String endpoint);
+
+        @Post("prebuilt/receipt/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeReceiptAsyncResponse> analyzeReceiptAsync(@HostParam("endpoint") String endpoint, @QueryParam("includeTextDetails") Boolean includeTextDetails, @BodyParam("application/json; charset=utf-8") Object fileStream);
+
+        @Get("prebuilt/receipt/analyzeResults/{resultId}")
+        @ExpectedResponses({200})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<SimpleResponse<AnalyzeOperationResult>> getAnalyzeReceiptResult(@PathParam("resultId") UUID resultId, @HostParam("endpoint") String endpoint);
+
+        @Post("layout/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeLayoutAsyncResponse> analyzeLayoutAsync(@HostParam("endpoint") String endpoint, @BodyParam("application/json; charset=utf-8") Object fileStream);
+
+        @Get("layout/analyzeResults/{resultId}")
+        @ExpectedResponses({200})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<SimpleResponse<AnalyzeOperationResult>> getAnalyzeLayoutResult(@PathParam("resultId") UUID resultId, @HostParam("endpoint") String endpoint);
+
+        @Post("prebuilt/receipt/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeReceiptAsyncWithJpegResponse> analyzeReceiptAsyncWithJpeg(@HostParam("endpoint") String endpoint, @QueryParam("includeTextDetails") Boolean includeTextDetails, @BodyParam("image/jpeg") Object fileStream);
+
+        @Post("prebuilt/receipt/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeReceiptAsyncWithPngResponse> analyzeReceiptAsyncWithPng(@HostParam("endpoint") String endpoint, @QueryParam("includeTextDetails") Boolean includeTextDetails, @BodyParam("image/png") Object fileStream);
+
+        @Post("prebuilt/receipt/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeReceiptAsyncWithTiffResponse> analyzeReceiptAsyncWithTiff(@HostParam("endpoint") String endpoint, @QueryParam("includeTextDetails") Boolean includeTextDetails, @BodyParam("image/tiff") Object fileStream);
+
+        @Post("prebuilt/receipt/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeReceiptAsyncWithPdfResponse> analyzeReceiptAsyncWithPdf(@HostParam("endpoint") String endpoint, @QueryParam("includeTextDetails") Boolean includeTextDetails, @BodyParam("application/pdf") Object fileStream);
+
+        @Post("layout/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeLayoutAsyncWithJpegResponse> analyzeLayoutAsyncWithJpeg(@HostParam("endpoint") String endpoint, @BodyParam("image/jpeg") Object fileStream);
+
+        @Post("layout/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeLayoutAsyncWithPngResponse> analyzeLayoutAsyncWithPng(@HostParam("endpoint") String endpoint, @BodyParam("image/png") Object fileStream);
+
+        @Post("layout/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeLayoutAsyncWithTiffResponse> analyzeLayoutAsyncWithTiff(@HostParam("endpoint") String endpoint, @BodyParam("image/tiff") Object fileStream);
+
+        @Post("layout/analyze")
+        @ExpectedResponses({202})
+        @UnexpectedResponseExceptionType(ErrorResponseException.class)
+        Mono<AnalyzeLayoutAsyncWithPdfResponse> analyzeLayoutAsyncWithPdf(@HostParam("endpoint") String endpoint, @BodyParam("application/pdf") Object fileStream);
+    }
 
     /**
      * Train Custom Model
@@ -55,7 +227,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<TrainCustomModelAsyncResponse> trainCustomModelAsyncWithRestResponseAsync(TrainRequest trainRequest);
+    public Mono<TrainCustomModelAsyncResponse> trainCustomModelAsyncWithRestResponseAsync(TrainRequest trainRequest) {
+        return service.trainCustomModelAsync(this.getEndpoint(), trainRequest);
+    }
 
     /**
      * Train Custom Model
@@ -66,7 +240,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> trainCustomModelAsyncAsync(TrainRequest trainRequest);
+    public Mono<Void> trainCustomModelAsyncAsync(TrainRequest trainRequest) {
+        return trainCustomModelAsyncWithRestResponseAsync(trainRequest)
+            .flatMap((TrainCustomModelAsyncResponse res) -> Mono.empty());
+    }
 
     /**
      * List Custom Models
@@ -75,7 +252,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<SimpleResponse<ModelsModel>> getCustomModelsWithRestResponseAsync();
+    public Mono<SimpleResponse<ModelsModel>> getCustomModelsWithRestResponseAsync() {
+        final String op = "full";
+        return service.getCustomModels(this.getEndpoint(), op);
+    }
 
     /**
      * List Custom Models
@@ -84,7 +264,16 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<ModelsModel> getCustomModelsAsync();
+    public Mono<ModelsModel> getCustomModelsAsync() {
+        return getCustomModelsWithRestResponseAsync()
+            .flatMap((SimpleResponse<ModelsModel> res) -> {
+                if (res.getValue() != null) {
+                    return Mono.just(res.getValue());
+                } else {
+                    return Mono.empty();
+                }
+            });
+    }
 
     /**
      * List Custom Models
@@ -95,7 +284,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<SimpleResponse<ModelsModel>> getCustomModelsWithRestResponseAsync(String op);
+    public Mono<SimpleResponse<ModelsModel>> getCustomModelsWithRestResponseAsync(String op) {
+        return service.getCustomModels(this.getEndpoint(), op);
+    }
 
     /**
      * List Custom Models
@@ -106,7 +297,16 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<ModelsModel> getCustomModelsAsync(String op);
+    public Mono<ModelsModel> getCustomModelsAsync(String op) {
+        return getCustomModelsWithRestResponseAsync(op)
+            .flatMap((SimpleResponse<ModelsModel> res) -> {
+                if (res.getValue() != null) {
+                    return Mono.just(res.getValue());
+                } else {
+                    return Mono.empty();
+                }
+            });
+    }
 
     /**
      * Get Custom Model
@@ -117,7 +317,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<SimpleResponse<Model>> getCustomModelWithRestResponseAsync(UUID modelId);
+    public Mono<SimpleResponse<Model>> getCustomModelWithRestResponseAsync(UUID modelId) {
+        final Boolean includeKeys = false;
+        return service.getCustomModel(modelId, this.getEndpoint(), includeKeys);
+    }
 
     /**
      * Get Custom Model
@@ -128,7 +331,16 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Model> getCustomModelAsync(UUID modelId);
+    public Mono<Model> getCustomModelAsync(UUID modelId) {
+        return getCustomModelWithRestResponseAsync(modelId)
+            .flatMap((SimpleResponse<Model> res) -> {
+                if (res.getValue() != null) {
+                    return Mono.just(res.getValue());
+                } else {
+                    return Mono.empty();
+                }
+            });
+    }
 
     /**
      * Get Custom Model
@@ -140,7 +352,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<SimpleResponse<Model>> getCustomModelWithRestResponseAsync(UUID modelId, Boolean includeKeys);
+    public Mono<SimpleResponse<Model>> getCustomModelWithRestResponseAsync(UUID modelId, Boolean includeKeys) {
+        return service.getCustomModel(modelId, this.getEndpoint(), includeKeys);
+    }
 
     /**
      * Get Custom Model
@@ -152,7 +366,16 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Model> getCustomModelAsync(UUID modelId, Boolean includeKeys);
+    public Mono<Model> getCustomModelAsync(UUID modelId, Boolean includeKeys) {
+        return getCustomModelWithRestResponseAsync(modelId, includeKeys)
+            .flatMap((SimpleResponse<Model> res) -> {
+                if (res.getValue() != null) {
+                    return Mono.just(res.getValue());
+                } else {
+                    return Mono.empty();
+                }
+            });
+    }
 
     /**
      * Delete Custom Model
@@ -163,7 +386,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Void>> deleteCustomModelWithRestResponseAsync(UUID modelId);
+    public Mono<Response<Void>> deleteCustomModelWithRestResponseAsync(UUID modelId) {
+        return service.deleteCustomModel(modelId, this.getEndpoint());
+    }
 
     /**
      * Delete Custom Model
@@ -174,7 +399,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> deleteCustomModelAsync(UUID modelId);
+    public Mono<Void> deleteCustomModelAsync(UUID modelId) {
+        return deleteCustomModelWithRestResponseAsync(modelId)
+            .flatMap((Response<Void> res) -> Mono.empty());
+    }
 
     /**
      * Analyze Form
@@ -185,7 +413,11 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeWithCustomModelResponse> analyzeWithCustomModelWithRestResponseAsync(UUID modelId);
+    public Mono<AnalyzeWithCustomModelResponse> analyzeWithCustomModelWithRestResponseAsync(UUID modelId) {
+        final Boolean includeTextDetails = false;
+        final Object fileStream = null;
+        return service.analyzeWithCustomModel(modelId, this.getEndpoint(), includeTextDetails, fileStream);
+    }
 
     /**
      * Analyze Form
@@ -196,7 +428,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeWithCustomModelAsync(UUID modelId);
+    public Mono<Void> analyzeWithCustomModelAsync(UUID modelId) {
+        return analyzeWithCustomModelWithRestResponseAsync(modelId)
+            .flatMap((AnalyzeWithCustomModelResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Form
@@ -209,7 +444,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeWithCustomModelResponse> analyzeWithCustomModelWithRestResponseAsync(UUID modelId, Boolean includeTextDetails, Object fileStream);
+    public Mono<AnalyzeWithCustomModelResponse> analyzeWithCustomModelWithRestResponseAsync(UUID modelId, Boolean includeTextDetails, Object fileStream) {
+        return service.analyzeWithCustomModel(modelId, this.getEndpoint(), includeTextDetails, fileStream);
+    }
 
     /**
      * Analyze Form
@@ -222,7 +459,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeWithCustomModelAsync(UUID modelId, Boolean includeTextDetails, Object fileStream);
+    public Mono<Void> analyzeWithCustomModelAsync(UUID modelId, Boolean includeTextDetails, Object fileStream) {
+        return analyzeWithCustomModelWithRestResponseAsync(modelId, includeTextDetails, fileStream)
+            .flatMap((AnalyzeWithCustomModelResponse res) -> Mono.empty());
+    }
 
     /**
      * Get Analyze Form Result
@@ -234,7 +474,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<SimpleResponse<AnalyzeOperationResult>> getAnalyzeFormResultWithRestResponseAsync(UUID modelId, UUID resultId);
+    public Mono<SimpleResponse<AnalyzeOperationResult>> getAnalyzeFormResultWithRestResponseAsync(UUID modelId, UUID resultId) {
+        return service.getAnalyzeFormResult(modelId, resultId, this.getEndpoint());
+    }
 
     /**
      * Get Analyze Form Result
@@ -246,7 +488,16 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeOperationResult> getAnalyzeFormResultAsync(UUID modelId, UUID resultId);
+    public Mono<AnalyzeOperationResult> getAnalyzeFormResultAsync(UUID modelId, UUID resultId) {
+        return getAnalyzeFormResultWithRestResponseAsync(modelId, resultId)
+            .flatMap((SimpleResponse<AnalyzeOperationResult> res) -> {
+                if (res.getValue() != null) {
+                    return Mono.just(res.getValue());
+                } else {
+                    return Mono.empty();
+                }
+            });
+    }
 
     /**
      * Analyze Receipt
@@ -255,7 +506,11 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeReceiptAsyncResponse> analyzeReceiptAsyncWithRestResponseAsync();
+    public Mono<AnalyzeReceiptAsyncResponse> analyzeReceiptAsyncWithRestResponseAsync() {
+        final Boolean includeTextDetails = false;
+        final Object fileStream = null;
+        return service.analyzeReceiptAsync(this.getEndpoint(), includeTextDetails, fileStream);
+    }
 
     /**
      * Analyze Receipt
@@ -264,7 +519,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeReceiptAsyncAsync();
+    public Mono<Void> analyzeReceiptAsyncAsync() {
+        return analyzeReceiptAsyncWithRestResponseAsync()
+            .flatMap((AnalyzeReceiptAsyncResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Receipt
@@ -276,7 +534,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeReceiptAsyncResponse> analyzeReceiptAsyncWithRestResponseAsync(Boolean includeTextDetails, Object fileStream);
+    public Mono<AnalyzeReceiptAsyncResponse> analyzeReceiptAsyncWithRestResponseAsync(Boolean includeTextDetails, Object fileStream) {
+        return service.analyzeReceiptAsync(this.getEndpoint(), includeTextDetails, fileStream);
+    }
 
     /**
      * Analyze Receipt
@@ -288,7 +548,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeReceiptAsyncAsync(Boolean includeTextDetails, Object fileStream);
+    public Mono<Void> analyzeReceiptAsyncAsync(Boolean includeTextDetails, Object fileStream) {
+        return analyzeReceiptAsyncWithRestResponseAsync(includeTextDetails, fileStream)
+            .flatMap((AnalyzeReceiptAsyncResponse res) -> Mono.empty());
+    }
 
     /**
      * Get Analyze Receipt Result
@@ -299,7 +562,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<SimpleResponse<AnalyzeOperationResult>> getAnalyzeReceiptResultWithRestResponseAsync(UUID resultId);
+    public Mono<SimpleResponse<AnalyzeOperationResult>> getAnalyzeReceiptResultWithRestResponseAsync(UUID resultId) {
+        return service.getAnalyzeReceiptResult(resultId, this.getEndpoint());
+    }
 
     /**
      * Get Analyze Receipt Result
@@ -310,7 +575,16 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeOperationResult> getAnalyzeReceiptResultAsync(UUID resultId);
+    public Mono<AnalyzeOperationResult> getAnalyzeReceiptResultAsync(UUID resultId) {
+        return getAnalyzeReceiptResultWithRestResponseAsync(resultId)
+            .flatMap((SimpleResponse<AnalyzeOperationResult> res) -> {
+                if (res.getValue() != null) {
+                    return Mono.just(res.getValue());
+                } else {
+                    return Mono.empty();
+                }
+            });
+    }
 
     /**
      * Analyze Layout
@@ -319,7 +593,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeLayoutAsyncResponse> analyzeLayoutAsyncWithRestResponseAsync();
+    public Mono<AnalyzeLayoutAsyncResponse> analyzeLayoutAsyncWithRestResponseAsync() {
+        final Object fileStream = null;
+        return service.analyzeLayoutAsync(this.getEndpoint(), fileStream);
+    }
 
     /**
      * Analyze Layout
@@ -328,7 +605,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeLayoutAsyncAsync();
+    public Mono<Void> analyzeLayoutAsyncAsync() {
+        return analyzeLayoutAsyncWithRestResponseAsync()
+            .flatMap((AnalyzeLayoutAsyncResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Layout
@@ -339,7 +619,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeLayoutAsyncResponse> analyzeLayoutAsyncWithRestResponseAsync(Object fileStream);
+    public Mono<AnalyzeLayoutAsyncResponse> analyzeLayoutAsyncWithRestResponseAsync(Object fileStream) {
+        return service.analyzeLayoutAsync(this.getEndpoint(), fileStream);
+    }
 
     /**
      * Analyze Layout
@@ -350,7 +632,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeLayoutAsyncAsync(Object fileStream);
+    public Mono<Void> analyzeLayoutAsyncAsync(Object fileStream) {
+        return analyzeLayoutAsyncWithRestResponseAsync(fileStream)
+            .flatMap((AnalyzeLayoutAsyncResponse res) -> Mono.empty());
+    }
 
     /**
      * Get Analyze Layout Result
@@ -361,7 +646,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<SimpleResponse<AnalyzeOperationResult>> getAnalyzeLayoutResultWithRestResponseAsync(UUID resultId);
+    public Mono<SimpleResponse<AnalyzeOperationResult>> getAnalyzeLayoutResultWithRestResponseAsync(UUID resultId) {
+        return service.getAnalyzeLayoutResult(resultId, this.getEndpoint());
+    }
 
     /**
      * Get Analyze Layout Result
@@ -372,7 +659,16 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeOperationResult> getAnalyzeLayoutResultAsync(UUID resultId);
+    public Mono<AnalyzeOperationResult> getAnalyzeLayoutResultAsync(UUID resultId) {
+        return getAnalyzeLayoutResultWithRestResponseAsync(resultId)
+            .flatMap((SimpleResponse<AnalyzeOperationResult> res) -> {
+                if (res.getValue() != null) {
+                    return Mono.just(res.getValue());
+                } else {
+                    return Mono.empty();
+                }
+            });
+    }
 
     /**
      * Analyze Receipt
@@ -381,7 +677,11 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeReceiptAsyncWithJpegResponse> analyzeReceiptAsyncWithJpegWithRestResponseAsync();
+    public Mono<AnalyzeReceiptAsyncWithJpegResponse> analyzeReceiptAsyncWithJpegWithRestResponseAsync() {
+        final Boolean includeTextDetails = false;
+        final Object fileStream = null;
+        return service.analyzeReceiptAsyncWithJpeg(this.getEndpoint(), includeTextDetails, fileStream);
+    }
 
     /**
      * Analyze Receipt
@@ -390,49 +690,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeReceiptAsyncWithJpegAsync();
-
-    /**
-     * Analyze Receipt
-     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @param includeTextDetails Include text lines and element references in the result.
-     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeReceiptAsyncWithJpegResponse> analyzeReceiptAsyncWithJpegWithRestResponseAsync(Boolean includeTextDetails, Object fileStream);
-
-    /**
-     * Analyze Receipt
-     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @param includeTextDetails Include text lines and element references in the result.
-     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeReceiptAsyncWithJpegAsync(Boolean includeTextDetails, Object fileStream);
-
-    /**
-     * Analyze Receipt
-     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeReceiptAsyncWithPngResponse> analyzeReceiptAsyncWithPngWithRestResponseAsync();
-
-    /**
-     * Analyze Receipt
-     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeReceiptAsyncWithPngAsync();
+    public Mono<Void> analyzeReceiptAsyncWithJpegAsync() {
+        return analyzeReceiptAsyncWithJpegWithRestResponseAsync()
+            .flatMap((AnalyzeReceiptAsyncWithJpegResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Receipt
@@ -444,7 +705,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeReceiptAsyncWithPngResponse> analyzeReceiptAsyncWithPngWithRestResponseAsync(Boolean includeTextDetails, Object fileStream);
+    public Mono<AnalyzeReceiptAsyncWithJpegResponse> analyzeReceiptAsyncWithJpegWithRestResponseAsync(Boolean includeTextDetails, Object fileStream) {
+        return service.analyzeReceiptAsyncWithJpeg(this.getEndpoint(), includeTextDetails, fileStream);
+    }
 
     /**
      * Analyze Receipt
@@ -456,7 +719,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeReceiptAsyncWithPngAsync(Boolean includeTextDetails, Object fileStream);
+    public Mono<Void> analyzeReceiptAsyncWithJpegAsync(Boolean includeTextDetails, Object fileStream) {
+        return analyzeReceiptAsyncWithJpegWithRestResponseAsync(includeTextDetails, fileStream)
+            .flatMap((AnalyzeReceiptAsyncWithJpegResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Receipt
@@ -465,7 +731,11 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeReceiptAsyncWithTiffResponse> analyzeReceiptAsyncWithTiffWithRestResponseAsync();
+    public Mono<AnalyzeReceiptAsyncWithPngResponse> analyzeReceiptAsyncWithPngWithRestResponseAsync() {
+        final Boolean includeTextDetails = false;
+        final Object fileStream = null;
+        return service.analyzeReceiptAsyncWithPng(this.getEndpoint(), includeTextDetails, fileStream);
+    }
 
     /**
      * Analyze Receipt
@@ -474,49 +744,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeReceiptAsyncWithTiffAsync();
-
-    /**
-     * Analyze Receipt
-     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @param includeTextDetails Include text lines and element references in the result.
-     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeReceiptAsyncWithTiffResponse> analyzeReceiptAsyncWithTiffWithRestResponseAsync(Boolean includeTextDetails, Object fileStream);
-
-    /**
-     * Analyze Receipt
-     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @param includeTextDetails Include text lines and element references in the result.
-     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeReceiptAsyncWithTiffAsync(Boolean includeTextDetails, Object fileStream);
-
-    /**
-     * Analyze Receipt
-     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeReceiptAsyncWithPdfResponse> analyzeReceiptAsyncWithPdfWithRestResponseAsync();
-
-    /**
-     * Analyze Receipt
-     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeReceiptAsyncWithPdfAsync();
+    public Mono<Void> analyzeReceiptAsyncWithPngAsync() {
+        return analyzeReceiptAsyncWithPngWithRestResponseAsync()
+            .flatMap((AnalyzeReceiptAsyncWithPngResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Receipt
@@ -528,7 +759,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeReceiptAsyncWithPdfResponse> analyzeReceiptAsyncWithPdfWithRestResponseAsync(Boolean includeTextDetails, Object fileStream);
+    public Mono<AnalyzeReceiptAsyncWithPngResponse> analyzeReceiptAsyncWithPngWithRestResponseAsync(Boolean includeTextDetails, Object fileStream) {
+        return service.analyzeReceiptAsyncWithPng(this.getEndpoint(), includeTextDetails, fileStream);
+    }
 
     /**
      * Analyze Receipt
@@ -540,7 +773,118 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeReceiptAsyncWithPdfAsync(Boolean includeTextDetails, Object fileStream);
+    public Mono<Void> analyzeReceiptAsyncWithPngAsync(Boolean includeTextDetails, Object fileStream) {
+        return analyzeReceiptAsyncWithPngWithRestResponseAsync(includeTextDetails, fileStream)
+            .flatMap((AnalyzeReceiptAsyncWithPngResponse res) -> Mono.empty());
+    }
+
+    /**
+     * Analyze Receipt
+     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<AnalyzeReceiptAsyncWithTiffResponse> analyzeReceiptAsyncWithTiffWithRestResponseAsync() {
+        final Boolean includeTextDetails = false;
+        final Object fileStream = null;
+        return service.analyzeReceiptAsyncWithTiff(this.getEndpoint(), includeTextDetails, fileStream);
+    }
+
+    /**
+     * Analyze Receipt
+     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<Void> analyzeReceiptAsyncWithTiffAsync() {
+        return analyzeReceiptAsyncWithTiffWithRestResponseAsync()
+            .flatMap((AnalyzeReceiptAsyncWithTiffResponse res) -> Mono.empty());
+    }
+
+    /**
+     * Analyze Receipt
+     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @param includeTextDetails Include text lines and element references in the result.
+     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<AnalyzeReceiptAsyncWithTiffResponse> analyzeReceiptAsyncWithTiffWithRestResponseAsync(Boolean includeTextDetails, Object fileStream) {
+        return service.analyzeReceiptAsyncWithTiff(this.getEndpoint(), includeTextDetails, fileStream);
+    }
+
+    /**
+     * Analyze Receipt
+     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @param includeTextDetails Include text lines and element references in the result.
+     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<Void> analyzeReceiptAsyncWithTiffAsync(Boolean includeTextDetails, Object fileStream) {
+        return analyzeReceiptAsyncWithTiffWithRestResponseAsync(includeTextDetails, fileStream)
+            .flatMap((AnalyzeReceiptAsyncWithTiffResponse res) -> Mono.empty());
+    }
+
+    /**
+     * Analyze Receipt
+     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<AnalyzeReceiptAsyncWithPdfResponse> analyzeReceiptAsyncWithPdfWithRestResponseAsync() {
+        final Boolean includeTextDetails = false;
+        final Object fileStream = null;
+        return service.analyzeReceiptAsyncWithPdf(this.getEndpoint(), includeTextDetails, fileStream);
+    }
+
+    /**
+     * Analyze Receipt
+     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<Void> analyzeReceiptAsyncWithPdfAsync() {
+        return analyzeReceiptAsyncWithPdfWithRestResponseAsync()
+            .flatMap((AnalyzeReceiptAsyncWithPdfResponse res) -> Mono.empty());
+    }
+
+    /**
+     * Analyze Receipt
+     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @param includeTextDetails Include text lines and element references in the result.
+     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<AnalyzeReceiptAsyncWithPdfResponse> analyzeReceiptAsyncWithPdfWithRestResponseAsync(Boolean includeTextDetails, Object fileStream) {
+        return service.analyzeReceiptAsyncWithPdf(this.getEndpoint(), includeTextDetails, fileStream);
+    }
+
+    /**
+     * Analyze Receipt
+     * Extract field text and semantic values from a given receipt document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @param includeTextDetails Include text lines and element references in the result.
+     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<Void> analyzeReceiptAsyncWithPdfAsync(Boolean includeTextDetails, Object fileStream) {
+        return analyzeReceiptAsyncWithPdfWithRestResponseAsync(includeTextDetails, fileStream)
+            .flatMap((AnalyzeReceiptAsyncWithPdfResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Layout
@@ -549,7 +893,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeLayoutAsyncWithJpegResponse> analyzeLayoutAsyncWithJpegWithRestResponseAsync();
+    public Mono<AnalyzeLayoutAsyncWithJpegResponse> analyzeLayoutAsyncWithJpegWithRestResponseAsync() {
+        final Object fileStream = null;
+        return service.analyzeLayoutAsyncWithJpeg(this.getEndpoint(), fileStream);
+    }
 
     /**
      * Analyze Layout
@@ -558,7 +905,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeLayoutAsyncWithJpegAsync();
+    public Mono<Void> analyzeLayoutAsyncWithJpegAsync() {
+        return analyzeLayoutAsyncWithJpegWithRestResponseAsync()
+            .flatMap((AnalyzeLayoutAsyncWithJpegResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Layout
@@ -569,7 +919,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeLayoutAsyncWithJpegResponse> analyzeLayoutAsyncWithJpegWithRestResponseAsync(Object fileStream);
+    public Mono<AnalyzeLayoutAsyncWithJpegResponse> analyzeLayoutAsyncWithJpegWithRestResponseAsync(Object fileStream) {
+        return service.analyzeLayoutAsyncWithJpeg(this.getEndpoint(), fileStream);
+    }
 
     /**
      * Analyze Layout
@@ -580,7 +932,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeLayoutAsyncWithJpegAsync(Object fileStream);
+    public Mono<Void> analyzeLayoutAsyncWithJpegAsync(Object fileStream) {
+        return analyzeLayoutAsyncWithJpegWithRestResponseAsync(fileStream)
+            .flatMap((AnalyzeLayoutAsyncWithJpegResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Layout
@@ -589,7 +944,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeLayoutAsyncWithPngResponse> analyzeLayoutAsyncWithPngWithRestResponseAsync();
+    public Mono<AnalyzeLayoutAsyncWithPngResponse> analyzeLayoutAsyncWithPngWithRestResponseAsync() {
+        final Object fileStream = null;
+        return service.analyzeLayoutAsyncWithPng(this.getEndpoint(), fileStream);
+    }
 
     /**
      * Analyze Layout
@@ -598,47 +956,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeLayoutAsyncWithPngAsync();
-
-    /**
-     * Analyze Layout
-     * Extract text and layout information from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeLayoutAsyncWithPngResponse> analyzeLayoutAsyncWithPngWithRestResponseAsync(Object fileStream);
-
-    /**
-     * Analyze Layout
-     * Extract text and layout information from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeLayoutAsyncWithPngAsync(Object fileStream);
-
-    /**
-     * Analyze Layout
-     * Extract text and layout information from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeLayoutAsyncWithTiffResponse> analyzeLayoutAsyncWithTiffWithRestResponseAsync();
-
-    /**
-     * Analyze Layout
-     * Extract text and layout information from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
-     *
-     * @return a Mono which performs the network request upon subscription.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeLayoutAsyncWithTiffAsync();
+    public Mono<Void> analyzeLayoutAsyncWithPngAsync() {
+        return analyzeLayoutAsyncWithPngWithRestResponseAsync()
+            .flatMap((AnalyzeLayoutAsyncWithPngResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Layout
@@ -649,7 +970,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeLayoutAsyncWithTiffResponse> analyzeLayoutAsyncWithTiffWithRestResponseAsync(Object fileStream);
+    public Mono<AnalyzeLayoutAsyncWithPngResponse> analyzeLayoutAsyncWithPngWithRestResponseAsync(Object fileStream) {
+        return service.analyzeLayoutAsyncWithPng(this.getEndpoint(), fileStream);
+    }
 
     /**
      * Analyze Layout
@@ -660,7 +983,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeLayoutAsyncWithTiffAsync(Object fileStream);
+    public Mono<Void> analyzeLayoutAsyncWithPngAsync(Object fileStream) {
+        return analyzeLayoutAsyncWithPngWithRestResponseAsync(fileStream)
+            .flatMap((AnalyzeLayoutAsyncWithPngResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Layout
@@ -669,7 +995,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeLayoutAsyncWithPdfResponse> analyzeLayoutAsyncWithPdfWithRestResponseAsync();
+    public Mono<AnalyzeLayoutAsyncWithTiffResponse> analyzeLayoutAsyncWithTiffWithRestResponseAsync() {
+        final Object fileStream = null;
+        return service.analyzeLayoutAsyncWithTiff(this.getEndpoint(), fileStream);
+    }
 
     /**
      * Analyze Layout
@@ -678,7 +1007,10 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeLayoutAsyncWithPdfAsync();
+    public Mono<Void> analyzeLayoutAsyncWithTiffAsync() {
+        return analyzeLayoutAsyncWithTiffWithRestResponseAsync()
+            .flatMap((AnalyzeLayoutAsyncWithTiffResponse res) -> Mono.empty());
+    }
 
     /**
      * Analyze Layout
@@ -689,7 +1021,9 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AnalyzeLayoutAsyncWithPdfResponse> analyzeLayoutAsyncWithPdfWithRestResponseAsync(Object fileStream);
+    public Mono<AnalyzeLayoutAsyncWithTiffResponse> analyzeLayoutAsyncWithTiffWithRestResponseAsync(Object fileStream) {
+        return service.analyzeLayoutAsyncWithTiff(this.getEndpoint(), fileStream);
+    }
 
     /**
      * Analyze Layout
@@ -700,5 +1034,59 @@ public interface FormRecognizerClient {
      * @return a Mono which performs the network request upon subscription.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> analyzeLayoutAsyncWithPdfAsync(Object fileStream);
+    public Mono<Void> analyzeLayoutAsyncWithTiffAsync(Object fileStream) {
+        return analyzeLayoutAsyncWithTiffWithRestResponseAsync(fileStream)
+            .flatMap((AnalyzeLayoutAsyncWithTiffResponse res) -> Mono.empty());
+    }
+
+    /**
+     * Analyze Layout
+     * Extract text and layout information from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<AnalyzeLayoutAsyncWithPdfResponse> analyzeLayoutAsyncWithPdfWithRestResponseAsync() {
+        final Object fileStream = null;
+        return service.analyzeLayoutAsyncWithPdf(this.getEndpoint(), fileStream);
+    }
+
+    /**
+     * Analyze Layout
+     * Extract text and layout information from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<Void> analyzeLayoutAsyncWithPdfAsync() {
+        return analyzeLayoutAsyncWithPdfWithRestResponseAsync()
+            .flatMap((AnalyzeLayoutAsyncWithPdfResponse res) -> Mono.empty());
+    }
+
+    /**
+     * Analyze Layout
+     * Extract text and layout information from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<AnalyzeLayoutAsyncWithPdfResponse> analyzeLayoutAsyncWithPdfWithRestResponseAsync(Object fileStream) {
+        return service.analyzeLayoutAsyncWithPdf(this.getEndpoint(), fileStream);
+    }
+
+    /**
+     * Analyze Layout
+     * Extract text and layout information from a given document. The input document must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local path) of the document to be analyzed.
+     *
+     * @param fileStream .json, .pdf, .jpg, .png or .tiff type file stream.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @return a Mono which performs the network request upon subscription.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<Void> analyzeLayoutAsyncWithPdfAsync(Object fileStream) {
+        return analyzeLayoutAsyncWithPdfWithRestResponseAsync(fileStream)
+            .flatMap((AnalyzeLayoutAsyncWithPdfResponse res) -> Mono.empty());
+    }
 }
