@@ -24,7 +24,7 @@ import com.azure.core.http.policy.RetryPolicy;
 import com.azure.core.http.policy.UserAgentPolicy;
 import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.SimpleResponse;
-import formrecognizer.FormRecognizerClient;
+import formrecognizer.generated.FormRecognizerClient;
 import formrecognizer.generated.models.AnalyzeLayoutAsyncResponse;
 import formrecognizer.generated.models.AnalyzeLayoutAsyncWithJpegResponse;
 import formrecognizer.generated.models.AnalyzeLayoutAsyncWithPdfResponse;

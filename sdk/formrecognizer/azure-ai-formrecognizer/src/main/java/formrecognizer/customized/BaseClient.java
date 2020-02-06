@@ -4,7 +4,7 @@ import com.azure.core.http.HttpPipeline;
 import com.azure.core.http.HttpPipelineBuilder;
 import com.azure.core.http.rest.RestProxy;
 
-import formrecognizer.FormRecognizerClient;
+import formrecognizer.generated.FormRecognizerClient;
 import formrecognizer.generated.implementation.FormRecognizerClientBuilder;
 
 public class BaseClient{
